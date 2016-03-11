@@ -64,9 +64,14 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="parser.cpp" />
+    <ClCompile Include="preprocessor.cpp" />
+    <ClCompile Include="symbolTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="parser.h" />
+    <ClInclude Include="preprocessor.h" />
+    <ClInclude Include="symbolTable.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

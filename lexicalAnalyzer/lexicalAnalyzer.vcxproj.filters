@@ -21,9 +21,24 @@
     <ClCompile Include="parser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="symbolTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="preprocessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="parser.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="symbolTable.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="preprocessor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

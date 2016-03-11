@@ -29,3 +29,6 @@
 
 #debug
 */debug/*
+*.opensdf
+*.sdf
+*.vcxproj*
