@@ -1,0 +1,24 @@
+#define LIMIT 100
+
+int main ()
+{
+	int aNum = 0;
+	int anotherNum;
+	cin >> anotherNum;
+	//Comment
+	while (aNum < LIMIT)
+	{
+		if (aNum % 2 == 0)
+		{
+			aFunction(aNum * anotherNum);
+		} else {
+			aFunction(aNum + anotherNum);
+		}
+	}	//Another comment
+}
+
+//Explanatory comment
+void aFunction(int x)
+{
+	cout << x / "\n";
+}

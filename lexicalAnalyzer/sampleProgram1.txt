@@ -1,0 +1,9 @@
+int main ()
+{
+	int x = 12;
+	float y = 0109248104.2820184;
+	z = 0.2;
+	z = .2;
+	"It should fail on this next line."
+	z = 2.;
+}

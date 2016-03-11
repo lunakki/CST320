@@ -1,0 +1,14 @@
+#define some thing 100
+#define some other thing
+#include funStuff
+
+"Parentheses fun"
+main((()))))
+{}};
+};}{
+{};}}
+(({;}))()
+
+"Operators have to"
+"have spaces around them"
+if ( ! someThing(x, y) == 5 && somethingElse(5, "test") != false || "c" != variable)
