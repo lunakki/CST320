@@ -12,22 +12,35 @@ int main () {
 	bool success;
 	string error;
 
-	for (int i = 0; i < 3; ++i) 
+	//for (int i = 0; i < 3; ++i) 
+	//{
+	//	cout << "Attempting to parse file " << fileNames[i] << endl;
+	//	success = parser.parse(fileNames[i], tokenStack, error);
+	//	
+	//	if (!success)
+	//	{
+	//		cout << "\n\nParsing failed: " << error << endl;
+	//	} else
+	//	{
+	//		cout << "\n\nSuccessfully parsed file!\n";
+	//		outputParseResults(tokenStack);	
+	//	}
+	//	cout << "\n\nPress enter to continue.\n";
+	//	getchar();
+	//}
+
+	success = parser.parseString("MAX 10", tokenStack, error);
+	if (!success)
 	{
-		cout << "Attempting to parse file " << fileNames[i] << endl;
-		success = parser.parse(fileNames[i], tokenStack, error);
-		
-		if (!success)
-		{
-			cout << "\n\nParsing failed: " << error << endl;
-		} else
-		{
-			cout << "\n\nSuccessfully parsed file!\n";
-			outputParseResults(tokenStack);	
-		}
-		cout << "\n\nPress enter to continue.\n";
-		getchar();
+		cout << "\n\nParsing failed: " << error << endl;
+	} else
+	{
+		cout << "\n\nSuccessfully parsed file!\n";
+		outputParseResults(tokenStack);	
 	}
+	cout << "\n\nPress enter to continue.\n";
+	getchar();
+
 	return 0;
 }
 

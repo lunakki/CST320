@@ -5,6 +5,51 @@ Parser::Parser()
 	 
 }
 
+bool Parser::parseString (string toParse, stack<Token> &outTokenStack, string &error) {
+	currentToken = "";
+	currentState = TS_NoToken;
+	currentChar = ' ';
+	bool continueParsing = true;
+	int length = toParse.length();
+
+	//Clear out token stack
+	while (!tokenStack.empty())
+		tokenStack.pop();
+	error = "";
+
+	//Process tokens
+	for (int i = 0; i < length && continueParsing; ++i)
+	{
+		currentChar = toParse[i];
+		continueParsing = parse();
+	}
+
+	//If there's still a token being processed, finish it
+	if (currentState != TS_NoToken) {
+		currentChar = ' ';
+		continueParsing = parse();
+	}
+
+	if (!continueParsing)
+	{
+		error = "\n\nERROR: Bad input. ";
+		if (currentState == TS_NoToken)
+		{
+			error = "\nInvalid character: " + currentChar;
+		}
+		else
+		{
+			error = "Invalid token: " + currentToken + currentChar;
+		}
+		return false;
+	}
+	outTokenStack = tokenStack;
+	return true;
+
+	error = "Stub";
+	return false;
+}
+
 bool Parser::parse (string fileName, stack<Token> &outTokenStack, string &error) {
 
 	fstream file;
@@ -33,62 +78,7 @@ bool Parser::parse (string fileName, stack<Token> &outTokenStack, string &error)
 			currentChar = ' ';
 		}
 		
-		switch(currentState)
-		{
-		case (TS_NoToken):
-			continueParsing = AddCharNoToken();
-			break;
-		case (TS_Identifier):
-			continueParsing = AddCharIdentifier();
-			break;
-		case (TS_Integer):
-			continueParsing = AddCharInteger();
-			break;
-		case (TS_CompleteFloat):
-			continueParsing = AddCharCompleteFloat();
-			break;
-		case (TS_CompleteString):
-			continueParsing = AddCharCompleteString();
-			break;
-		case (TS_LessThan):
-			continueParsing = AddCharLessThan();
-			break;
-		case (TS_GreaterThan):
-			continueParsing = AddCharGreaterThan();
-			break;
-		case (TS_Equal):
-			continueParsing = AddCharEqual();
-			break;
-		case (TS_CompleteOperator):
-			continueParsing = AddCharCompleteOperator();
-			break;
-		case (TS_Directive):
-			continueParsing = AddCharDirective();
-			break;
-		case (TS_IncompleteFloat):
-			continueParsing = AddCharIncompleteFloat();
-			break;
-		case (TS_IncompleteString):
-			continueParsing = AddCharIncompleteString();
-			break;
-		case (TS_IncompleteAnd):
-			continueParsing = AddCharIncompleteAnd();
-			break;
-		case (TS_IncompleteOr):
-			continueParsing = AddCharIncompleteOr();
-			break;
-		case (TS_Not):
-			continueParsing = AddCharNot();
-			break;
-		case (TS_Division):
-			continueParsing = AddCharDivision();
-			break;
-		case (TS_Comment):
-			continueParsing = AddCharComment();
-			break;
-		default:
-			break;
-		}
+		continueParsing = parse();
 	}
 
 	file.close();
@@ -109,6 +99,70 @@ bool Parser::parse (string fileName, stack<Token> &outTokenStack, string &error)
 	}
 	outTokenStack = tokenStack;
 	return true;
+}
+
+bool Parser::parse()
+{
+	bool continueParsing = false;
+
+	switch(currentState)
+	{
+	case (TS_NoToken):
+		continueParsing = AddCharNoToken();
+		break;
+	case (TS_Identifier):
+		continueParsing = AddCharIdentifier();
+		break;
+	case (TS_Integer):
+		continueParsing = AddCharInteger();
+		break;
+	case (TS_CompleteFloat):
+		continueParsing = AddCharCompleteFloat();
+		break;
+	case (TS_CompleteString):
+		continueParsing = AddCharCompleteString();
+		break;
+	case (TS_LessThan):
+		continueParsing = AddCharLessThan();
+		break;
+	case (TS_GreaterThan):
+		continueParsing = AddCharGreaterThan();
+		break;
+	case (TS_Equal):
+		continueParsing = AddCharEqual();
+		break;
+	case (TS_CompleteOperator):
+		continueParsing = AddCharCompleteOperator();
+		break;
+	case (TS_Directive):
+		continueParsing = AddCharDirective();
+		break;
+	case (TS_IncompleteFloat):
+		continueParsing = AddCharIncompleteFloat();
+		break;
+	case (TS_IncompleteString):
+		continueParsing = AddCharIncompleteString();
+		break;
+	case (TS_IncompleteAnd):
+		continueParsing = AddCharIncompleteAnd();
+		break;
+	case (TS_IncompleteOr):
+		continueParsing = AddCharIncompleteOr();
+		break;
+	case (TS_Not):
+		continueParsing = AddCharNot();
+		break;
+	case (TS_Division):
+		continueParsing = AddCharDivision();
+		break;
+	case (TS_Comment):
+		continueParsing = AddCharComment();
+		break;
+	default:
+		break;
+	}
+
+	return continueParsing;
 }
 
 bool Parser::AddCharNoToken()
