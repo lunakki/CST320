@@ -16,7 +16,6 @@ private:
 	
 	void removeToken(int &count);
 	void replaceTokens(int count);
-	void replaceToken();
 
 	bool program(int &parentCount);
 	bool funcProto(int &parentCount);

@@ -34,13 +34,6 @@ void DescentParser::replaceTokens(int count)
 	}
 }
 
-//Replaces one token that was removed
-void DescentParser::replaceToken()
-{
-	tokens.push_front(tokens.front());
-	tempTokens.pop_front();
-}
-
 //Rule functions
 //See grammar.docx for grammar documentation
 //They are named the same there as they are here and are listed in the same order
@@ -429,78 +422,376 @@ bool DescentParser::stat(int &parentCount)
 
 bool DescentParser::mIdStat(int &parentCount)
 {
+	int count = 0;
 
-	return false;
+	if(tokens.front().type == TT_Operator && tokens.front().token == "=")
+	{
+		removeToken(count);
+		if (expression(count))
+		{
+			parentCount += count;
+			return true;
+		}
+	}
+
+	//Next rule
+	replaceTokens(count);
+	count = 0;
+
+	if (tokens.front().type == TT_Operator && tokens.front().token != "=")
+	{
+		removeToken(count);
+		if (expression(count))
+		{
+			if (exprRecurs(count))
+			{
+				parentCount += count;
+				return true;
+			}
+		}
+	}
+
+	//Next rule
+	replaceTokens(count);
+	count = 0;
+
+	if (mIdProcCall(count))
+	{
+		if (exprRecurs(count))
+		{
+			parentCount += count;
+			return true;
+		}
+	}
+
+	//lambda
+	replaceTokens(count);
+	return true;
 }
 
 bool DescentParser::expression(int &parentCount)
 {
+	int count = 0;
+	if (tokens.front().type == TT_Identifier)
+	{
+		removeToken(count);
+		if (mExpression(count))
+		{
+			parentCount += count;
+			return true;
+		}
+	}
 
+	//Next rule
+	replaceTokens(count);
+	count = 0;
+	if (tokens.front().type == TT_Symbol && tokens.front().token == "(")
+	{
+		removeToken(count);
+		if (expression(count))
+		{
+			if (tokens.front().type == TT_Symbol && tokens.front().token == ")")
+			{
+				removeToken(count);
+				if (exprRecurs(count))
+				{
+					parentCount += count;
+					return true;
+				}
+			}
+		}
+	}
+
+	//Next rule; going to combine three into one check
+	replaceTokens(count);
+	count = 0;
+	if (tokens.front().type == TT_Integer || tokens.front().type == TT_Float || tokens.front().type == TT_StringLiteral)
+	{
+		removeToken(count);
+		if (exprRecurs(count))
+		{
+			parentCount += count;
+			return true;
+		}
+	}
+
+	//no match
+	replaceTokens(count);
 	return false;
 }
 
 bool DescentParser::mExpression(int &parentCount)
 {
+	int count = 0;
+	if (tokens.front().type == TT_Operator && tokens.front().token != "=")
+	{
+		removeToken(count);
+		if (expression(count))
+		{
+			if (exprRecurs(count))
+			{
+				parentCount += count;
+				return true;
+			}
+		}
+	}
 
-	return false;
+	//next rule
+	replaceTokens(count);
+	count = 0;
+
+	if (tokens.front().type == TT_Symbol && tokens.front().token == "(")
+	{
+		removeToken(count);
+		if (mOptArgs(count))
+		{
+			parentCount += count;
+			return true;
+		}
+	}
+
+	//lambda
+	replaceTokens(count);
+	return true;
 }
 
 bool DescentParser::mOptArgs(int &parentCount)
 {
+	int count = 0;
 
+	if (tokens.front().type == TT_Symbol && tokens.front().token == ")")
+	{
+		removeToken(count);
+		if (exprRecurs(count))
+		{
+			parentCount += count;
+			return true;
+		}
+	}
+
+	//next rule
+	replaceTokens(count);
+	count = 0;
+	if (args(count))
+	{
+		if (tokens.front().type == TT_Symbol && tokens.front().token == ")")
+		{
+			removeToken(count);
+			if (exprRecurs(count))
+			{
+				parentCount += count;
+				return true;
+			}
+		}
+	}
+
+	//no match
+	replaceTokens(count);
 	return false;
 }
 
 bool DescentParser::exprRecurs(int &parentCount)
 {
+	int count = 0;
+	if (tokens.front().type == TT_Operator && tokens.front().token != "=")
+	{
+		removeToken(count);
+		if (expression(count))
+		{
+			if (exprRecurs(count))
+			{
+				parentCount += count;
+				return true;
+			}
+		}
+	}
 
-	return false;
+
+	//lambda
+	replaceTokens(count);
+	return true;
 }
 
 bool DescentParser::rElse(int &parentCount)
 {
-	
-	return false;
+	int count = 0;
+	if (tokens.front().type == TT_Keyword && tokens.front().token == "else")
+	{
+		removeToken(count);
+		if (moreElse(count))
+		{
+			parentCount += count;
+			return true;
+		}
+	}
+
+	//lambda
+	replaceTokens(count);
+	return true;
 }
 
 bool DescentParser::moreElse(int &parentCount)
 {
+	int count = 0;
+	if (tokens.front().type == TT_Keyword && tokens.front().token == "if")
+	{
+		removeToken(count);
+		if (tokens.front().type == TT_Symbol && tokens.front().token == "(")
+		{
+			removeToken(count);
+			if (expression(count))
+			{
+				if (tokens.front().type == TT_Symbol && tokens.front().token == ")")
+				{
+					removeToken(count);
+					if (tokens.front().type == TT_Symbol && tokens.front().token == "{")
+					{
+						removeToken(count);
+						if (statList(count))
+						{
+							if (tokens.front().type == TT_Symbol && tokens.front().token == "}")
+							{
+								removeToken(count);
+								if (rElse(count))
+								{
+									parentCount += count;
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
+	//First rule failed; put back tokens and try the next
+	replaceTokens(count);
+	count = 0;
+
+	if (tokens.front().type == TT_Symbol && tokens.front().token == "{")
+	{
+		removeToken(count);
+		if (statList(count))
+		{
+			if (tokens.front().type == TT_Symbol && tokens.front().token == "}")
+			{	
+				removeToken(count);
+				parentCount += count;
+				return true;
+			}	
+		}
+	}
+
+	//No match
+	replaceTokens(count);
 	return false;
 }
 
 bool DescentParser::mIdProcCall(int &parentCount)
 {
-	
+	int count = 0;
+
+	if (tokens.front().type == TT_Symbol && tokens.front().token == "(")
+	{
+		removeToken(count);
+		if (mOptArgs(count))
+		{
+			parentCount += count;
+			return true;
+		}
+	}
+
+	//no match
+	replaceTokens(count);
 	return false;
 }
 
 bool DescentParser::args(int &parentCount)
 {
+	int count = 0;
+	if (expression(count))
+	{
+		if (mExpArgs(count))
+		{
+			parentCount += count;
+			return true;
+		}
+	}
 
+	//no match
+	replaceTokens(count);
 	return false;
 }
 
 bool DescentParser::mExpArgs(int &parentCount)
 {
+	int count = 0;
+	if (tokens.front().type == TT_Symbol && tokens.front().token == ",") 
+	{
+		removeToken(count);
+		if (args(count))
+		{
+			parentCount += count;
+			return true;
+		}
+	}
 
-	return false;
+	//lambda
+	replaceTokens(count);
+	return true;
 }
 
 bool DescentParser::varDecl(int &parentCount)
 {
+	int count = 0;
+
+	if (type(count))
+	{
+		if (tokens.front().type == TT_Identifier)
+		{
+			removeToken(count);
+			if (mTypeVarDecl(count))
+			{
+				parentCount += count;
+				return true;
+			}
+		}
+	}
 	
+	//no match
+	replaceTokens(count);
 	return false;
 }
 
 bool DescentParser::mTypeVarDecl(int &parentCount)
 {
+	int count = 0;
+	if (tokens.front().type == TT_Operator && tokens.front().token == "=")
+	{
+		removeToken(count);
+		if (expression(count))
+		{
+			parentCount += count;
+			return true;
+		}
+	}
 
-	return false;
+	//lambda
+	replaceTokens(count);
+	return true;
 }
 
 bool DescentParser::optExpr(int &parentCount)
 {
-	
-	return false;
+	int count = 0;
+	if (expression(count))
+	{
+		parentCount += count;
+		return true;
+	}
+
+	//lambda
+	replaceTokens(count);
+	return true;
 }
