@@ -3,12 +3,13 @@
 
 using namespace std;
 
-void outputParseResults(stack<Token> tokenStack);
+void outputParseResults(queue<Token> tokenStack);
 
 int main () {
 	string fileNames[] = {"sampleProgram0.txt", "sampleProgram1.txt", "sampleProgram2.txt"};
-	stack<Token> tokenStack;
+	queue<Token> tokenStack;
 	Parser parser;
+	Preprocessor preprocessor;
 	bool success;
 	string error;
 
@@ -24,32 +25,30 @@ int main () {
 		{
 			cout << "\n\nSuccessfully parsed file!\n";
 			outputParseResults(tokenStack);	
+			cout << "\n\nRunning file through preprocessor...\n";
+			success = preprocessor.preprocess(tokenStack, error);
+			if (!success)
+			{
+				cout << "Preprocessor failed: " << error << endl;
+			}
+			else
+			{
+				cout << "Successfully ran through preprocessor!\n";
+				outputParseResults(tokenStack);
+			}
+			
 		}
 		cout << "\n\nPress enter to continue.\n";
 		getchar();
 	}
-
-	success = parser.parseString("MAX 10", tokenStack, error);
-	if (!success)
-	{
-		cout << "\n\nParsing failed: " << error << endl;
-	} else
-	{
-		cout << "\n\nSuccessfully parsed file!\n";
-		outputParseResults(tokenStack);	
-	}
-	cout << "\n\nPress enter to continue.\n";
-	getchar();
-
-	return 0;
 }
 
-void outputParseResults(stack<Token> tokenStack)
+void outputParseResults(queue<Token> tokenStack)
 {
-	cout << "Below are the tokens in reverse order:";
+	cout << "Below are the tokens:";
 	while (!tokenStack.empty())
 	{
-		Token token = tokenStack.top();
+		Token token = tokenStack.front();
 		tokenStack.pop();
 		cout << "\nToken value: " << setw(25) << left 
 			<< token.token << setw(1) << "    Token Type: ";

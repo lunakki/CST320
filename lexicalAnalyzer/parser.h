@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <stack>
+#include <queue>
 #include <fstream>
 #include <string>
 #include <iomanip>
@@ -10,8 +11,8 @@
 
 class Parser{
 public:
-	bool parse(string fileName, stack<Token> &outTokenStack, string &error);
-	bool parseString(string toParse, stack<Token> &outTokenStack, string &error);
+	bool parse(string fileName, queue<Token> &outTokenStack, string &error);
+	bool parseString(string toParse, queue<Token> &outTokenStack, string &error);
 	Parser(){};
 private:
 	bool parse();
@@ -38,7 +39,7 @@ private:
 
 	char currentChar;
 	TokenState currentState;
-	stack<Token> tokenStack;
+	queue<Token> tokenStack;
 	string currentToken;
 };
 

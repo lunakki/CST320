@@ -32,6 +32,7 @@ struct Token {
 		this->token = token;
 		this->type = type;
 	}
+	Token(){}
 };
 
 #endif

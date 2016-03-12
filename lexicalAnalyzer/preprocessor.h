@@ -8,7 +8,7 @@
 
 class Preprocessor {
 public:
-	bool preprocess(stack<Token> &inTokenStack, string &error);
+	bool preprocess(queue<Token> &inTokenStack, string &error);
 private:
 	
 };

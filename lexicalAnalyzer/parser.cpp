@@ -10,7 +10,7 @@ void Parser::resetVariables()
 		tokenStack.pop();
 }
 
-bool Parser::parseString (string toParse, stack<Token> &outTokenStack, string &error) 
+bool Parser::parseString (string toParse, queue<Token> &outTokenStack, string &error) 
 {
 	bool continueParsing = true;
 	int length = toParse.length();
@@ -50,7 +50,7 @@ bool Parser::parseString (string toParse, stack<Token> &outTokenStack, string &e
 	return false;
 }
 
-bool Parser::parse (string fileName, stack<Token> &outTokenStack, string &error) {
+bool Parser::parse (string fileName, queue<Token> &outTokenStack, string &error) {
 
 	fstream file;
 	bool continueParsing = true;
