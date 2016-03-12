@@ -8,7 +8,7 @@ using namespace std;
 
 //Enum for the type; safer than a string
 enum Type {
-	T_Int, T_Float, T_String, T_Bool
+	T_Int, T_Float, T_String
 };
 
 //Enum for the use; safer than a string
@@ -50,9 +50,6 @@ struct Symbol {
 		case(T_Int):
 			typeStr = "int";
 			break;
-		case(T_Bool):
-			typeStr = "bool";
-			break;
 		case(T_Float):
 			typeStr = "float";
 			break;
@@ -79,6 +76,7 @@ public:
 	bool deleteSymbol(string name);
 	bool updateSymbol(Symbol newSymbol);
 	string toString();
+	bool containsSymbol(string name);
 
 private:
 	unordered_map<std::string,Symbol> symbolTable;	//Map for holding symbols

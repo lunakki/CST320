@@ -44,3 +44,12 @@ string SymbolTable::toString() {
 
 	return output;
 }
+
+bool SymbolTable::containsSymbol(string name) {
+	try {
+		symbolTable.at(name);
+		return true;
+	} catch (exception e) {
+		return false;
+	}
+}
