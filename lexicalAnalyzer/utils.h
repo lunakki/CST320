@@ -10,7 +10,7 @@ const string KEYWORDS[] = {"for", "while", "void", "else", "int", "float", "stri
 
 //Used to store information about the type of token
 enum TokenType {
-	TT_Empty, TT_Identifier, TT_Preprocessor, TT_StringLiteral, TT_Integer, TT_Float, TT_Operator, TT_Symbol, TT_Keyword, TT_Comment
+	TT_End, TT_Identifier, TT_Preprocessor, TT_StringLiteral, TT_Integer, TT_Float, TT_Operator, TT_Symbol, TT_Keyword, TT_Comment
 };
 
 //To track the current state of the token being worked with
