@@ -7,9 +7,9 @@
 
 class Preprocessor {
 public:
-	bool preprocess(stack<Token> tokenStack, string error);
+	bool preprocess(stack<Token> &inTokenStack, string &error);
 private:
-
+	stack <Token> tokenStack;
 };
 
 #endif

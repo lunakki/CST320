@@ -1,21 +1,21 @@
 #include "parser.h"
 
-Parser::Parser()
+//Clears out variables before running a new parse
+void Parser::resetVariables() 
 {
-	 
-}
-
-bool Parser::parseString (string toParse, stack<Token> &outTokenStack, string &error) {
 	currentToken = "";
 	currentState = TS_NoToken;
 	currentChar = ' ';
-	bool continueParsing = true;
-	int length = toParse.length();
-
-	//Clear out token stack
 	while (!tokenStack.empty())
 		tokenStack.pop();
+}
+
+bool Parser::parseString (string toParse, stack<Token> &outTokenStack, string &error) 
+{
+	bool continueParsing = true;
+	int length = toParse.length();
 	error = "";
+	resetVariables();
 
 	//Process tokens
 	for (int i = 0; i < length && continueParsing; ++i)
@@ -53,15 +53,9 @@ bool Parser::parseString (string toParse, stack<Token> &outTokenStack, string &e
 bool Parser::parse (string fileName, stack<Token> &outTokenStack, string &error) {
 
 	fstream file;
-	currentToken = "";
-	currentState = TS_NoToken;
-	currentChar = ' ';
 	bool continueParsing = true;
-
-	//Clear out token stack
-	while (!tokenStack.empty())
-		tokenStack.pop();
 	error = "";
+	resetVariables();
 
 	file.open(fileName);
 	if (!file.is_open())

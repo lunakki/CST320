@@ -12,9 +12,10 @@ class Parser{
 public:
 	bool parse(string fileName, stack<Token> &outTokenStack, string &error);
 	bool parseString(string toParse, stack<Token> &outTokenStack, string &error);
-	Parser();
+	Parser(){};
 private:
 	bool parse();
+	void resetVariables();
 	bool AddCharNoToken();
 	bool AddCharIdentifier();
 	bool AddCharInteger();
