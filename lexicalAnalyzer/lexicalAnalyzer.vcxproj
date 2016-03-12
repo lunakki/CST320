@@ -62,6 +62,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="descentParser.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="preprocessor.cpp" />
@@ -69,6 +70,7 @@
     <ClCompile Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="descentParser.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="preprocessor.h" />
     <ClInclude Include="symbolTable.h" />

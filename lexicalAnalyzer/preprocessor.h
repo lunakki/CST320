@@ -4,11 +4,11 @@
 #include "utils.h"
 #include "symbolTable.h"
 #include "parser.h"
-#include <stack>
+#include <deque>
 
 class Preprocessor {
 public:
-	bool preprocess(queue<Token> &inTokenStack, string &error);
+	bool preprocess(deque<Token> &inTokenStack, string &error);
 private:
 	
 };

@@ -30,6 +30,9 @@
     <ClCompile Include="utils.h">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="descentParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="parser.h">
@@ -39,6 +42,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="preprocessor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="descentParser.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

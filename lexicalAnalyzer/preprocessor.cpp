@@ -1,9 +1,9 @@
 #include "preprocessor.h"
 using namespace std;
 
-bool Preprocessor::preprocess(queue<Token> &inTokenStack, string &error)
+bool Preprocessor::preprocess(deque<Token> &inTokenStack, string &error)
 {
-	queue <Token> tempTokenStack, directiveTokenStack;
+	deque <Token> tempTokenStack, directiveTokenStack;
 	string parseError;
 	SymbolTable symbolTable;
 	Parser parser;
@@ -14,7 +14,7 @@ bool Preprocessor::preprocess(queue<Token> &inTokenStack, string &error)
 	{
 		Token id, value, currToken;
 		currToken = inTokenStack.front();
-		inTokenStack.pop();
+		inTokenStack.pop_front();
 		if (currToken.type == TT_Preprocessor)
 		{
 			//Check what kind of directive it is
@@ -39,7 +39,7 @@ bool Preprocessor::preprocess(queue<Token> &inTokenStack, string &error)
 				
 				//Get identifier from directive
 				id = directiveTokenStack.front();
-				directiveTokenStack.pop();
+				directiveTokenStack.pop_front();
 				if (id.type != TT_Identifier) {
 						error = "Invalid identifier for preprocessor directive: " + currToken.token;
 						return false;
@@ -48,7 +48,7 @@ bool Preprocessor::preprocess(queue<Token> &inTokenStack, string &error)
 				if (!directiveTokenStack.empty())
 				{
 					value = directiveTokenStack.front();
-					directiveTokenStack.pop();
+					directiveTokenStack.pop_front();
 					Type valueType;
 
 					if (value.type == TT_Integer)
@@ -99,14 +99,14 @@ bool Preprocessor::preprocess(queue<Token> &inTokenStack, string &error)
 				}
 
 				//Push replacement token on in place of original identifier
-				tempTokenStack.push(Token(symbol.value, tokenType));
-			} else { //Put the identifier back on the queue; no match found
-				tempTokenStack.push(currToken);
+				tempTokenStack.push_back(Token(symbol.value, tokenType));
+			} else { //Put the identifier back on the deque; no match found
+				tempTokenStack.push_back(currToken);
 			}
-		//If not a preprocessor directive, comment, or identifier in the symbol table, just push it onto the new queue
+		//If not a preprocessor directive, comment, or identifier in the symbol table, just push it onto the new deque
 		} else if (currToken.type != TT_Comment)
 		{
-			tempTokenStack.push(currToken);
+			tempTokenStack.push_back(currToken);
 		}
 	} //end while
 

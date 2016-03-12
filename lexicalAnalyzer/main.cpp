@@ -3,11 +3,11 @@
 
 using namespace std;
 
-void outputParseResults(queue<Token> tokenStack);
+void outputParseResults(deque<Token> tokenStack);
 
 int main () {
 	string fileNames[] = {"sampleProgram0.txt", "sampleProgram1.txt", "sampleProgram2.txt"};
-	queue<Token> tokenStack;
+	deque<Token> tokenStack;
 	Parser parser;
 	Preprocessor preprocessor;
 	bool success;
@@ -43,13 +43,13 @@ int main () {
 	}
 }
 
-void outputParseResults(queue<Token> tokenStack)
+void outputParseResults(deque<Token> tokenStack)
 {
 	cout << "Below are the tokens:";
 	while (!tokenStack.empty())
 	{
 		Token token = tokenStack.front();
-		tokenStack.pop();
+		tokenStack.pop_front();
 		cout << "\nToken value: " << setw(25) << left 
 			<< token.token << setw(1) << "    Token Type: ";
 			

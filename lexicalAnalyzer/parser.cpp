@@ -7,10 +7,10 @@ void Parser::resetVariables()
 	currentState = TS_NoToken;
 	currentChar = ' ';
 	while (!tokenStack.empty())
-		tokenStack.pop();
+		tokenStack.pop_front();
 }
 
-bool Parser::parseString (string toParse, queue<Token> &outTokenStack, string &error) 
+bool Parser::parseString (string toParse, deque<Token> &outTokenStack, string &error) 
 {
 	bool continueParsing = true;
 	int length = toParse.length();
@@ -50,7 +50,7 @@ bool Parser::parseString (string toParse, queue<Token> &outTokenStack, string &e
 	return false;
 }
 
-bool Parser::parse (string fileName, queue<Token> &outTokenStack, string &error) {
+bool Parser::parse (string fileName, deque<Token> &outTokenStack, string &error) {
 
 	fstream file;
 	bool continueParsing = true;
@@ -174,7 +174,7 @@ bool Parser::AddCharNoToken()
 	case ('{'):
 	case ('}'):
 	case (';'):
-		tokenStack.push(Token(currentChar, TT_Symbol));
+		tokenStack.push_back(Token(currentChar, TT_Symbol));
 		break;
 	//whitespace, just ignore
 	//this is only here so it stays in a good state
@@ -377,7 +377,7 @@ bool Parser::AddCharDirective()
 	//End of directive
 	if (currentChar == '\n')
 	{
-		tokenStack.push(Token(currentToken, TT_Preprocessor));
+		tokenStack.push_back(Token(currentToken, TT_Preprocessor));
 		currentToken = "";
 		currentState = TS_NoToken;
 	//Keep adding (we don't care what it is; preprocessor will take care of that)
@@ -468,7 +468,7 @@ bool Parser::AddCharComment()
 	//End of comment
 	if (currentChar == '\n')
 	{
-		tokenStack.push(Token(currentToken, TT_Comment));
+		tokenStack.push_back(Token(currentToken, TT_Comment));
 		currentToken = "";
 		currentState = TS_NoToken;
 	//Keep adding (we don't care what it is)
@@ -489,9 +489,9 @@ bool Parser::CheckForTokenEnd(TokenType type)
 	case ('\t'):
 	case ('\n'):
 		if (IsKeyword(currentToken))
-			tokenStack.push(Token(currentToken, TT_Keyword));
+			tokenStack.push_back(Token(currentToken, TT_Keyword));
 		else
-			tokenStack.push(Token(currentToken, type));
+			tokenStack.push_back(Token(currentToken, type));
 		break;
 	//End of token; add to stack and reset
 	//Add symbol to stack too
@@ -502,10 +502,10 @@ bool Parser::CheckForTokenEnd(TokenType type)
 	case ('}'):
 	case (';'):
 		if (IsKeyword(currentToken))
-			tokenStack.push(Token(currentToken, TT_Keyword));
+			tokenStack.push_back(Token(currentToken, TT_Keyword));
 		else
-			tokenStack.push(Token(currentToken, type));
-		tokenStack.push(Token(currentChar, TT_Symbol));
+			tokenStack.push_back(Token(currentToken, type));
+		tokenStack.push_back(Token(currentChar, TT_Symbol));
 		break;
 	//Not a token separator
 	default:
