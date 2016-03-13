@@ -1,5 +1,8 @@
+//Author: Kat Valentine
+
 #include <iostream>
 #include "preprocessor.h"
+#include "descentParser.h"
 
 using namespace std;
 
@@ -10,9 +13,12 @@ int main () {
 	deque<Token> tokenStack;
 	Parser parser;
 	Preprocessor preprocessor;
+	DescentParser dparser;
 	bool success;
 	string error;
 
+
+	//Parse files
 	for (int i = 0; i < 3; ++i) 
 	{
 		cout << "Attempting to parse file " << fileNames[i] << endl;
@@ -20,10 +26,10 @@ int main () {
 		
 		if (!success)
 		{
-			cout << "\n\nParsing failed: " << error << endl;
+			cout << "\n\Lexical analyzer failed: " << error << endl;
 		} else
 		{
-			cout << "\n\nSuccessfully parsed file!\n";
+			cout << "\n\nLexical analyzer successfully parsed file!\n";
 			outputParseResults(tokenStack);	
 			cout << "\n\nRunning file through preprocessor...\n";
 			success = preprocessor.preprocess(tokenStack, error);
@@ -35,6 +41,14 @@ int main () {
 			{
 				cout << "Successfully ran through preprocessor!\n";
 				outputParseResults(tokenStack);
+				cout << "\n\nRunning through descent parser...\n";
+				success = dparser.parse(tokenStack, error);
+				if (!success)
+				{
+					cout << "Descent parser failed: " << error << endl;
+				} else {
+					cout << "Descent parser succeeded!";
+				}
 			}
 			
 		}
@@ -43,6 +57,7 @@ int main () {
 	}
 }
 
+//Prints a token deque
 void outputParseResults(deque<Token> tokenStack)
 {
 	cout << "Below are the tokens:";

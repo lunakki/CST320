@@ -1,25 +1,46 @@
-#define LIMIT 100
-#define myheader_h
+#define MAX 10
 
-int main ()
-{
-	int aNum = 0;
-	int anotherNum;
-	cin >> anotherNum;
-	//Comment
-	while (aNum < LIMIT)
+//Prototypes
+void prototype();
+float aFunct(int a, float b);
+
+//Main
+int main(string args, int length) { 
+	string y;
+	float x = 2.6;
+	y = "hello world";
+	x = x + (5 * 9);
+	prototype();
+	x = aFunct(y, x);
+	return 0; 
+}
+
+//Other functions
+void prototype() {
+	int i = 0;
+	while (i < MAX)	//loop
 	{
-		if (aNum % 2 == 0)
+		if (i % 3 == 1) //conditional
 		{
-			aFunction(aNum * anotherNum);
+			cout << "hello world";
+		} else if (i % 2 == 0) {
+			cout << "see you soon world";
 		} else {
-			aFunction(aNum + anotherNum);
-		}
-	}	//Another comment
+			cout << "goodbye world";
+		};
+	};	
+	cout << i / 2;
+	cin >> temp;
+	return;
 }
 
-//Explanatory comment
-void aFunction(int x)
-{
-	cout << x / "\n";
+float aFunct(int a, float b) {
+	float result;
+	result = a * b / (2 + b);
+	if (result < 20)
+	{
+		aFunct(a, b / 2);
+	};
+	return result;
 }
+

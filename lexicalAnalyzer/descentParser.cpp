@@ -2,16 +2,31 @@
 
 //Attempts to parses a deque of tokens
 //Returns true if sucessful; false otherwise
-bool DescentParser::parse(deque<Token> inTokens, string error)
+bool DescentParser::parse(deque<Token> inTokens, string &error)
 {
 	int count = 0;
 	bool success;
+	error = "";
 	tokens = inTokens;
 	tokens.push_back(Token("end", TT_End));
 	tempTokens.clear();
 	success = program(count);
+
+	//Check if parsing was successfull
+	if (!success)
+	{
+		error = "Unable to parse.";
+		return false;
+	}
+
+	//Check if all tokens were checked
+	if (tokens.front().type != TT_End)
+	{
+		error = "Tokens found after end of parsing.";
+		return false;
+	}
 	//Only successful if rule succeeded and all tokens were used
-	return (success && (tokens.front().type == TT_End));
+	return true;
 }
 
 //Removes one token from the deque being processed
@@ -29,8 +44,8 @@ void DescentParser::replaceTokens(int count)
 {
 	for (int i = 0; i < count; ++i)
 	{
-		tokens.push_front(tokens.front());
-		tempTokens.pop_front();
+		tokens.push_front(tempTokens.back());
+		tempTokens.pop_back();
 	}
 }
 
@@ -107,17 +122,10 @@ bool DescentParser::type(int &parentCount)
 {
 	//Track how many tokens this function removes
 	int count = 0;
-	TokenType type = tokens.front().type;
-	switch (type)
+
+	if (tokens.front().type == TT_Keyword && (tokens.front().token == "void" || tokens.front().token == "int"
+		|| tokens.front().token == "float" || tokens.front().token == "string"))
 	{
-	case TT_Keyword:
-		//Make sure it's the correct keyword "void"
-		//If not then it doesn't match any rules
-		if (tokens.front().token != "void")
-			break;
-	case TT_Integer:
-	case TT_Float:
-	case TT_StringLiteral:
 		//If any of these are true then a rule is matched
 		removeToken(count);		
 		//Add count to parent's count in case it has to backtrack
@@ -201,7 +209,7 @@ bool DescentParser::function(int &parentCount)
 			if (tokens.front().type == TT_Symbol && tokens.front().token == "(")
 			{
 				removeToken(count);				
-				if (args(count))
+				if (params(count))
 				{
 					if (tokens.front().type == TT_Symbol && tokens.front().token == ")")
 					{
@@ -213,14 +221,21 @@ bool DescentParser::function(int &parentCount)
 							{
 								if (tokens.front().type == TT_Keyword && tokens.front().token == "return")
 								{
-									removeToken(count);									
+									removeToken(count);		
 									if (optExpr(count))
 									{
-										if (tokens.front().type == TT_Symbol && tokens.front().token == "}")
+										if (tokens.front().type == TT_Symbol && tokens.front().token == ";")
 										{
 											removeToken(count);
-											parentCount += count;
-											return true;
+											if (tokens.front().type == TT_Symbol && tokens.front().token == "}")
+											{
+												removeToken(count);
+												if (function(count))
+												{
+													parentCount += count;
+													return true;
+												}
+											}
 										}
 									}
 								}
@@ -232,8 +247,9 @@ bool DescentParser::function(int &parentCount)
 		}
 	}
 
+	//lambda
 	replaceTokens(count);
-	return false;
+	return true;
 }
 
 bool DescentParser::statList(int &parentCount)

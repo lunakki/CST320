@@ -7,7 +7,7 @@
 
 class DescentParser {
 public:
-	bool parse(deque<Token> inTokens, string error);
+	bool parse(deque<Token> inTokens, string& error);
 
 private:
 	deque<Token> tokens;

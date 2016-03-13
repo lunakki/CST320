@@ -12,3 +12,13 @@ main((()))))
 "Operators have to"
 "have spaces around them"
 if ( ! someThing(x, y) == 5 && somethingElse(5, "test") != false || "c" != variable)
+
+int main ()
+{
+	int x = 12;
+	float y = 0109248104.2820184;
+	z = 0.2;
+	z = .2;
+	"It should fail on this next line."
+	z = 2.;
+}

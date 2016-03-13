@@ -6,7 +6,7 @@
 
 using namespace std;
 
-const string KEYWORDS[] = {"for", "while", "void", "else", "int", "float", "string", "main"};
+const string KEYWORDS[] = {"for", "while", "if", "void", "else", "int", "float", "string", "return", "cout", "cin"};
 
 //Used to store information about the type of token
 enum TokenType {

@@ -1,9 +1,28 @@
+#define LIMIT 100
+#define myheader_h
+#define LIMIT 60
+
 int main ()
 {
-	int x = 12;
-	float y = 0109248104.2820184;
-	z = 0.2;
-	z = .2;
-	"It should fail on this next line."
-	z = 2.;
+	int aNum = 0;
+	int anotherNum;
+	cin >> anotherNum;
+	//Comment
+	while (aNum < LIMIT)
+	{
+		if (aNum % 2 == 0)
+		{
+			aFunction(aNum * anotherNum);
+		} else {
+			aFunction(aNum + anotherNum);
+		};
+	};	//Another comment
+	return 0;
+}
+
+//Explanatory comment
+void aFunction(int x)
+{
+	cout << x / "\n";
+	return;
 }
