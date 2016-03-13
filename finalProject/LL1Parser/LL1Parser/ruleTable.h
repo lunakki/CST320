@@ -7,17 +7,7 @@
 
 using namespace std;
 
-//Enum for the type; safer than a string
-enum Type {
-	T_Int, T_Float, T_String
-};
-
-//Enum for the use; safer than a string
-enum Use {
-	U_Var, U_Const, U_Func
-};
-
-//Symbols to be held in the the symbol table
+//Tokens to be held in the table
 struct Token {
 	//Constructors
 	Token(string name, bool isTerminal, bool hasLambda, bool isStarting, list<string> rule) {
@@ -35,11 +25,32 @@ struct Token {
 	}
 
 	void addRule(list<string>rule) {
-		rules.insert(rules.begin(), rule);
+		rules.push_back(rule);
 	}
 
 	string toString() {
-		return name;
+		string output = "Token: " + name + "\n\tIs terminal: ";
+		if (isTerminal)
+			output += "yes";
+		else
+			output += "no";
+		
+		output += "\n\tHas lambda rule: ";
+		if (hasLambda)
+			output += "yes";
+		else
+			output += "no";
+		output += "\n\tRules: \n";
+		for (list<list<string>>::iterator itRules = rules.begin(); itRules != rules.end(); ++itRules)
+		{
+			output += "\t\t";
+			for (list<string>::iterator itOneRule = itRules->begin(); itOneRule != itRules->end(); ++itOneRule)
+			{
+				output += *itOneRule + " ";
+			}
+			output += "\n";
+		}
+		return output;
 	}
 
 	string name;
@@ -55,10 +66,11 @@ public:
 	void addToken(string token);
 	Token getToken(string name);
 	bool deleteToken(string name);
-	bool addRule(string name, list<string> rule);
+	void addRule(string name, list<string> rule);
 	bool removeRule(string name, list<string> rule);
 	string toString();
 	bool containsToken(string name);
+	void clear();
 
 private:
 	unordered_map<std::string,Token> tokenTable;	//Map for holding tokens and their properties

@@ -5,10 +5,16 @@ using namespace std;
 //Add a symbol to the table
 //Will not add the symbol if the name is already in the table
 void RuleTable::addToken(Token token){
+	if (token.name == "lambda")
+		return;
+
 	tokenTable.insert(make_pair(token.name, token));
 }
 
 void RuleTable::addToken(string name){
+	if (name == "lambda")
+		return;
+
 	tokenTable.insert(make_pair(name, Token(name)));
 }
 
@@ -30,6 +36,10 @@ bool RuleTable::deleteToken(string name){
 //Sets it to a non terminal in either case
 //If the rule is lambda, it sets the token's hasLambda property instead
 void RuleTable::addRule(string name, list<string> rule){
+	//Don't add empty lambda as a token
+	if (name == "lambda")
+		return;
+
 	if (!containsToken(name))
 	{
 		addToken(name);
@@ -63,4 +73,8 @@ bool RuleTable::containsToken(string name) {
 	} catch (exception e) {
 		return false;
 	}
+}
+
+void RuleTable::clear() {
+	tokenTable.clear();
 }

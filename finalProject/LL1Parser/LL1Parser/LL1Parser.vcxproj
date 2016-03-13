@@ -62,6 +62,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="fileParser.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="ruleTable.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="fileParser.h" />
+    <ClInclude Include="ruleTable.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
