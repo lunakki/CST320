@@ -21,6 +21,7 @@ bool FileParser::parse(string fileName, string error, RuleTable &outTable)
 		{
 			file >> word;
 			table.addToken(word);
+			table.addDependency(tokenName, word);
 			rule.push_back(word);
 		}
 		if (!rule.empty())
@@ -42,6 +43,7 @@ bool FileParser::parse(string fileName, string error, RuleTable &outTable)
 		{
 			file >> word;
 			table.addToken(word);
+			table.addDependency(tokenName, word);
 			rule.push_back(word);
 		}
 		if (!rule.empty())

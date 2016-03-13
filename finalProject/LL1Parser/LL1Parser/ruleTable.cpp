@@ -53,6 +53,18 @@ void RuleTable::addRule(string name, list<string> rule){
 	}
 }
 
+void RuleTable::addDependency(string name, string dependency){
+	//Don't add empty lambda as a token
+	if (name == "lambda" || dependency == "lambda")
+		return;
+
+	if (!containsToken(name))
+	{
+		addToken(name);
+	}
+	tokenTable.at(name).addDependency(dependency);
+}
+
 //Converts the tokenTable to a string for easy printing
 string RuleTable::toString() {
 	string output = "";
