@@ -38,12 +38,19 @@ struct Token {
 		firstSet.insert(token);
 	}
 
+	void addFollowSet(string token) {
+		followSet.insert(token);
+	}
+
+	void addSharesFollowSet(string token) {
+		sharesFollowSet.insert(token);
+	}
+
 	string toString() {
-		string output = "Token: " + name + "\n\tIs terminal: ";
 		if (isTerminal)
-			output += "yes";
-		else
-			output += "no";
+			return "Token: " + name + " (terminal)\n";
+
+		string output = "Token: " + name + "\n\tIs terminal: no";
 		
 		output += "\n\tHas lambda rule: ";
 		if (hasLambda)
@@ -80,6 +87,20 @@ struct Token {
 			output += token + " ";
 		}
 		output += "\n";
+
+		output += "\tFollow set: ";
+		for (auto& token: followSet)
+		{
+			output += token + " ";
+		}
+		output += "\n";
+
+		output += "\tShared follow set: ";
+		for (auto& token: sharesFollowSet)
+		{
+			output += token + " ";
+		}
+		output += "\n";
 		return output;
 	}
 
@@ -90,6 +111,8 @@ struct Token {
 	unordered_set<string> dependencies;
 	unordered_set<string> prependencies;
 	unordered_set<string> firstSet;
+	unordered_set<string> followSet;
+	unordered_set<string> sharesFollowSet;
 };
 
 #endif

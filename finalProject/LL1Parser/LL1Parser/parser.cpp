@@ -13,6 +13,7 @@ bool GrammarParser::parse(string fileName, string &error, RuleTable &outTable)
 
 	calculateLambdaRulesR(parents, table.getStartingToken(), true);
 	calculateFirstSet(parents, table.getStartingToken(), true);
+	calculateFollowSet(parents, table.getStartingToken());
 
 	outTable = table;
 	return success;
@@ -187,6 +188,67 @@ void GrammarParser::calculateFirstSet(unordered_set<string> parents, string name
 			//Don't call this if it's in the parents to prevent endless loops
 			if (parents.count(name) == 0)
 				calculateFirstSet(parents, x, false);
+		}
+	}
+}
+
+void GrammarParser::calculateFollowSet(unordered_set<string> parents, string name)
+{
+	Token token = table.getToken(name);
+	unordered_set<string> dependencies = token.dependencies;
+	list<list<string>> rules = token.rules;
+	int firstSetSize = token.firstSet.size();
+
+	//We don't care about terminals
+	if (token.isTerminal)
+	{
+		return;
+	}
+
+	parents.insert(name);
+	//This makes sure all tokens get calculated at least once
+	//Skips anything that has already been checked (in parents)
+	for (auto& x : token.dependencies)
+	{
+		//Don't call this if it's in the parents to prevent endless loops
+		if (parents.count(x) == 0)
+			calculateFollowSet(parents, x);
+	}
+
+	for (auto& aRule : token.rules)	//Each rule
+	{
+		for (list<string>::iterator itRule = aRule.begin(); itRule != aRule.end(); ++itRule)	//Each token in the rule
+		{
+			//We don't care about terminals
+			if (!table.getToken(*itRule).isTerminal) 
+			{
+				//Iterate through the rest of the rule and see what all follows this token
+				list<string>::iterator itRule2 = itRule;
+				Token currToken = table.getToken(*itRule);
+				for (++itRule2; itRule2 != aRule.end(); ++itRule2)
+				{
+					
+					//Add everything in the first set of the following token to this token
+					for (auto& aFirst : table.getToken(*itRule2).firstSet) //Each item in the first set of the token
+					{
+						currToken.addFollowSet(aFirst);
+					}
+					
+					//The next token can follow this one only if this is lambda
+					if (!table.getToken(*itRule2).hasLambda)
+					{
+						break;
+					}
+				}
+				//If we got to the end of the rule then this token shares the follow set of
+				//the token that this rule belongs to
+				//Note that token so we can figure it out later
+				if (itRule2 == aRule.end())
+				{
+					currToken.addSharesFollowSet(name);
+				}
+				table.updateToken(currToken);
+			}
 		}
 	}
 }

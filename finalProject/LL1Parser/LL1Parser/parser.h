@@ -11,6 +11,7 @@ private:
 	bool parseFile(string fileName, string &error);
 	void calculateLambdaRulesR(unordered_set<string> parents, string name, bool checkDependents);
 	void calculateFirstSet(unordered_set<string> parents, string name, bool checkDependents);
+	void calculateFollowSet(unordered_set<string> parents, string name);
 
 	RuleTable table;
 };
