@@ -66,8 +66,16 @@ struct Token {
 			output += token + " ";
 		}
 		output += "\n";
+
 		output += "\tPrependencies: ";
 		for (auto& token: prependencies)
+		{
+			output += token + " ";
+		}
+		output += "\n";
+
+		output += "\tFirst set: ";
+		for (auto& token: firstSet)
 		{
 			output += token + " ";
 		}

@@ -10,7 +10,9 @@ bool GrammarParser::parse(string fileName, string &error, RuleTable &outTable)
 	success = parseFile(fileName, error);
 	if (!success)
 		return success;
+
 	calculateLambdaRulesR(parents, table.getStartingToken(), true);
+	calculateFirstSet(parents, table.getStartingToken(), true);
 
 	outTable = table;
 	return success;
@@ -133,64 +135,58 @@ void GrammarParser::calculateFirstSet(unordered_set<string> parents, string name
 	unordered_set<string> dependencies = token.dependencies;
 	list<list<string>> rules = token.rules;
 	parents.insert(name);
+	int firstSetSize = token.firstSet.size();
 
-	//Don't need to check terminals
+	//A terminal's "first set" is only itself
+	//Also it has no dependencies to deal with
 	if (token.isTerminal)
+	{
+		token.addFirstSet(name);
+		table.updateToken(token);
 		return;
+	}
 
-	//Check if all the tokens this one is dependent can be lambda
-	//This makes sure all tokens get checked at least once
-	//Can be turned off if a token is being rechecked
+	//This makes sure all tokens get calculated at least once
+	//And also checks the dependents before the prependents (since we need their info first)
+	//Can be turned off if a token is being recalculated (dependency isn't always linear)
 	if (checkDependents)
 		for (auto& x : token.dependencies)
 		{
 			//Don't call this if it's in the parents to prevent endless loops
 			if (parents.count(x) == 0)
-				calculateLambdaRulesR(parents, x, true);
+				calculateFirstSet(parents, x, true);
 		}
 
-	//Go through all the rules and check if any can go to lambda
-	//Stop as soon as we find one
-	if (!token.hasLambda)
+	//Go through all the rules and calculate the first set based on each
+	for (auto& aRule : token.rules)	//Each rule
 	{
-		for (auto& aRule : token.rules)
+		for (auto& aToken : aRule)	//Each token in the rule
 		{
-			bool isLambda = true;
-			for (auto& aToken : aRule)
+			for (auto& aFirst : table.getToken(aToken).firstSet) //Each item in the first set of the token
 			{
-				//Check if all of the tokens in this rule can go to lambda
-				//If one can't, break out and note it
-				if (!table.getToken(aToken).hasLambda)
-				{
-					isLambda = false;
-					break;
-				}
+				token.addFirstSet(aFirst);
 			}
-			//If all went to lambda in a rule then this token can too
-			if (isLambda)
+			//We only care about the tokens that could be first
+			//Don't check the next token if this one can't be lambda
+			if (!table.getToken(aToken).hasLambda)
 			{
-				token.hasLambda = true;
-				table.updateToken(token);
 				break;
 			}
 		}
 	}
-	else //It already could be lambda, don't need to do anything else
-	{
-		return;
-	}
 
-	//If it changed from false to true, need to recheck anything dependent on it that isn't going
-	//to be checked after this is run
+	//If items were added to the first set, recheck items dependent on this that aren't
+	//already waiting to be checked
 	//This is because two tokens may be dependent on each other
 	//and we don't know which will be figured out first
-	if (token.hasLambda)
+	if (firstSetSize != token.firstSet.size())
 	{
+		table.updateToken(token);
 		for (auto& x : token.prependencies)
 		{
 			//Don't call this if it's in the parents to prevent endless loops
 			if (parents.count(name) == 0)
-				calculateLambdaRulesR(parents, x, false);
+				calculateFirstSet(parents, x, false);
 		}
 	}
 }
