@@ -1,5 +1,9 @@
-S a B c
+S A B
+A B C
+A b
 B a c C
-B a
-C c
+B C A
+B D
+C a
 C lambda
+D lambda

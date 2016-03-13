@@ -55,7 +55,8 @@ void RuleTable::addRule(string name, list<string> rule){
 
 void RuleTable::addDependency(string name, string dependency){
 	//Don't add empty lambda as a token
-	if (name == "lambda" || dependency == "lambda")
+	//Also don't add a token as its own dependent
+	if (name == "lambda" || dependency == "lambda" || name == dependency)
 		return;
 
 	if (!containsToken(name))
@@ -63,6 +64,39 @@ void RuleTable::addDependency(string name, string dependency){
 		addToken(name);
 	}
 	tokenTable.at(name).addDependency(dependency);
+}
+
+void RuleTable::addPrependency(string name, string prependency){
+	//Don't add empty lambda as a token
+	//Also don't add a token as its own prependent
+	if (name == "lambda" || prependency == "lambda" || name == prependency)
+		return;
+
+	if (!containsToken(name))
+	{
+		addToken(name);
+	}
+	tokenTable.at(name).addPrependency(prependency);
+}
+
+void RuleTable::addToFirst(string name, string token) {
+	if (name == "lambda" || token == "lambda" || name == token)
+		return;
+
+	if (!containsToken(name))
+	{
+		addToken(name);
+	}
+	tokenTable.at(name).addFirstSet(token);
+}
+
+void RuleTable::updateToken(Token token)
+{
+	try {
+		tokenTable.at(token.name) = token;
+	} catch (exception e) {
+		return;
+	}
 }
 
 //Converts the tokenTable to a string for easy printing
@@ -89,4 +123,12 @@ bool RuleTable::containsToken(string name) {
 
 void RuleTable::clear() {
 	tokenTable.clear();
+}
+
+void RuleTable::setStartingToken(string name) {
+	start = name;
+}
+
+string RuleTable::getStartingToken() {
+	return start;
 }

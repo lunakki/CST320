@@ -10,18 +10,16 @@ using namespace std;
 //Tokens to be held in the table
 struct Token {
 	//Constructors
-	Token(string name, bool isTerminal, bool hasLambda, bool isStarting, list<string> rule) {
+	Token(string name, bool isTerminal, bool hasLambda, list<string> rule) {
 		this->name = name;
 		this->isTerminal = isTerminal;
 		this->hasLambda = hasLambda;
-		this->isStarting = isStarting;
 		addRule(rule);
 	}
 	Token(string name) {
 		this->name = name;
 		isTerminal = true;
 		hasLambda = false;
-		isStarting = false;
 	}
 
 	void addRule(list<string>rule) {
@@ -30,6 +28,14 @@ struct Token {
 
 	void addDependency(string dependency) {
 		dependencies.insert(dependency);
+	}
+
+	void addPrependency(string prependency) {
+		prependencies.insert(prependency);
+	}
+
+	void addFirstSet(string token) {
+		firstSet.insert(token);
 	}
 
 	string toString() {
@@ -60,15 +66,22 @@ struct Token {
 			output += token + " ";
 		}
 		output += "\n";
+		output += "\tPrependencies: ";
+		for (auto& token: prependencies)
+		{
+			output += token + " ";
+		}
+		output += "\n";
 		return output;
 	}
 
 	string name;
 	bool isTerminal;
 	bool hasLambda;
-	bool isStarting;
 	list<list<string>> rules;
 	unordered_set<string> dependencies;
+	unordered_set<string> prependencies;
+	unordered_set<string> firstSet;
 };
 
 #endif

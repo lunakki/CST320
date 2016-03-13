@@ -1,10 +1,10 @@
-#include "fileParser.h"
+#include "parser.h"
 #include <iostream>
 
 using namespace std;
 
 int main() {
-	FileParser parser;
+	GrammarParser parser;
 	RuleTable table;
 	string error;
 	bool success;

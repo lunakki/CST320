@@ -62,12 +62,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="fileParser.cpp" />
+    <ClCompile Include="parser.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ruleTable.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="fileParser.h" />
+    <ClInclude Include="parser.h" />
     <ClInclude Include="ruleTable.h" />
     <ClInclude Include="Token.h" />
   </ItemGroup>
