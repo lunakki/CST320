@@ -1,5 +1,6 @@
 #include "parser.h"
 
+//Public function to parse a grammar file
 bool GrammarParser::parse(string fileName, string &error, RuleTable &outTable)
 {
 	unordered_set<string> parents;
@@ -19,6 +20,14 @@ bool GrammarParser::parse(string fileName, string &error, RuleTable &outTable)
 	return success;
 }
 
+//Reads the file and stores information about each token and rule
+//At the end, the table will have every token that appears in a rule or has a rule,
+//All of the rules listed for each token, whether or not it's a terminal (no rules found),
+//Whether any of its rules are lambda,
+//which tokens are dependent on it (meaning it appears in their rules),
+//and which tokens it is dependent on (they appear in its rules)
+//It returns an error if the file cannot be opened, the file is empty, or
+//a line has a token name but no rule
 bool GrammarParser::parseFile(string fileName, string &error) {
 	fstream file;
 	string tokenName, word;
@@ -63,6 +72,8 @@ bool GrammarParser::parseFile(string fileName, string &error) {
 	return true;
 }
 
+//Recursively goes through the tokens to figure out if they can be evaluated to lambda or not
+//If it's found that an item can be lambda, the appropriate property for the token is changed in the table
 void GrammarParser::calculateLambdaRulesR(unordered_set<string> parents, string name, bool checkDependents) {
 	Token token = table.getToken(name);
 	unordered_set<string> dependencies = token.dependencies;
@@ -110,7 +121,7 @@ void GrammarParser::calculateLambdaRulesR(unordered_set<string> parents, string 
 			}
 		}
 	}
-	else //It already could be lambda, don't need to do anything else
+	else //We already knew it could be lambda, don't need to do anything else
 	{
 		return;
 	}
@@ -130,6 +141,9 @@ void GrammarParser::calculateLambdaRulesR(unordered_set<string> parents, string 
 	}
 }
 
+//Recursively calculates the first set for each token
+//This includes checking other rules as appropriate, and looking past tokens that can be lambda
+//The first set is stored in the token table
 void GrammarParser::calculateFirstSet(unordered_set<string> parents, string name, bool checkDependents)
 {
 	Token token = table.getToken(name);
@@ -192,6 +206,10 @@ void GrammarParser::calculateFirstSet(unordered_set<string> parents, string name
 	}
 }
 
+//Recursively calculates the follow set for each token by looking through every rule
+//It's recursive because there's no direct way to iterate over the table (it's a private member)
+//It will record both terminals following a token and the first sets of non terminals following a token
+//If a token is at the end of the rule, it makes a note of it for later use
 void GrammarParser::calculateFollowSet(unordered_set<string> parents, string name)
 {
 	Token token = table.getToken(name);
