@@ -30,8 +30,8 @@ struct Token {
 		dependencies.insert(dependency);
 	}
 
-	void addPrependency(string prependency) {
-		prependencies.insert(prependency);
+	void addPrecendency(string precendency) {
+		precendencies.insert(precendency);
 	}
 
 	void addFirstSet(string token) {
@@ -43,7 +43,11 @@ struct Token {
 	}
 
 	void addSharesFollowSet(string token) {
-		sharesFollowSet.insert(token);
+		dependFollowSet.insert(token);
+	}
+
+	void addPrependFollowSet(string token) {
+		precendFollowSet.insert(token);
 	}
 
 	string toString() {
@@ -74,8 +78,8 @@ struct Token {
 		}
 		output += "\n";
 
-		output += "\tPrependencies: ";
-		for (auto& token: prependencies)
+		output += "\tPrecendencies: ";
+		for (auto& token: precendencies)
 		{
 			output += token + " ";
 		}
@@ -95,8 +99,16 @@ struct Token {
 		}
 		output += "\n";
 
-		output += "\tShared follow set: ";
-		for (auto& token: sharesFollowSet)
+		output += "\tDependent follow sets: ";
+		for (auto& token: dependFollowSet)
+		{
+			output += token + " ";
+		}
+		output += "\n";
+		return output;
+
+		output += "\tPrecendent follow sets: ";
+		for (auto& token: precendFollowSet)
 		{
 			output += token + " ";
 		}
@@ -109,10 +121,11 @@ struct Token {
 	bool hasLambda;
 	list<list<string>> rules;
 	unordered_set<string> dependencies;
-	unordered_set<string> prependencies;
+	unordered_set<string> precendencies;
 	unordered_set<string> firstSet;
 	unordered_set<string> followSet;
-	unordered_set<string> sharesFollowSet;
+	unordered_set<string> dependFollowSet;
+	unordered_set<string> precendFollowSet;
 };
 
 #endif

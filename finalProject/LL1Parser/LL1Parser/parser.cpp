@@ -14,7 +14,7 @@ bool GrammarParser::parse(string fileName, string &error, RuleTable &outTable)
 
 	calculateLambdaRulesR(parents, table.getStartingToken(), true);
 	calculateFirstSet(parents, table.getStartingToken(), true);
-	calculateFollowSet(parents, table.getStartingToken());
+	calculateFollowSet();
 
 	outTable = table;
 	return success;
@@ -56,7 +56,7 @@ bool GrammarParser::parseFile(string fileName, string &error) {
 			file >> word;
 			table.addToken(word);
 			table.addDependency(tokenName, word);
-			table.addPrependency(word, tokenName);
+			table.addPrecendency(word, tokenName);
 			rule.push_back(word);
 		}
 		if (!rule.empty())
@@ -132,7 +132,7 @@ void GrammarParser::calculateLambdaRulesR(unordered_set<string> parents, string 
 	//and we don't know which will be figured out first
 	if (token.hasLambda)
 	{
-		for (auto& x : token.prependencies)
+		for (auto& x : token.precendencies)
 		{
 			//Don't call this if it's in the parents to prevent endless loops
 			if (parents.count(name) == 0)
@@ -144,6 +144,7 @@ void GrammarParser::calculateLambdaRulesR(unordered_set<string> parents, string 
 //Recursively calculates the first set for each token
 //This includes checking other rules as appropriate, and looking past tokens that can be lambda
 //The first set is stored in the token table
+//Note that lambda is not stored in the first set; there's a separate property to track that
 void GrammarParser::calculateFirstSet(unordered_set<string> parents, string name, bool checkDependents)
 {
 	Token token = table.getToken(name);
@@ -197,7 +198,7 @@ void GrammarParser::calculateFirstSet(unordered_set<string> parents, string name
 	if (firstSetSize != token.firstSet.size())
 	{
 		table.updateToken(token);
-		for (auto& x : token.prependencies)
+		for (auto& x : token.precendencies)
 		{
 			//Don't call this if it's in the parents to prevent endless loops
 			if (parents.count(name) == 0)
@@ -267,6 +268,69 @@ void GrammarParser::calculateFollowSet(unordered_set<string> parents, string nam
 				}
 				table.updateToken(currToken);
 			}
+		}
+	}
+}
+
+void GrammarParser::calculateFollowSet()
+{
+	unordered_set<string> parents;
+	//Calculate follow sets for cases that don't depend on other follow sets
+	calculateFollowSet(parents, table.getStartingToken());
+
+	//Add "end" token to table and to the follow set of the starting token
+	//We'll need it there for the next step
+	table.addToken("$");
+	Token startToken = table.getToken(table.getStartingToken());
+	startToken.addFollowSet("$");
+	table.updateToken(startToken);
+
+	//Calculate the follow set cases involved other follow sets
+	calculateFollowSetPart2(parents, table.getStartingToken(), true);
+}
+
+void GrammarParser::calculateFollowSetPart2(unordered_set<string> parents, string name, bool checkDependents)
+{
+	Token token = table.getToken(name);
+	unordered_set<string> dependencies = token.dependencies;
+	int followSetSize = token.followSet.size();
+	parents.insert(name);
+
+	//Don't need to check terminals
+	if (token.isTerminal)
+		return;
+
+	//This makes sure all tokens get checked at least once
+	//Can be turned off if a token is being rechecked
+	if (checkDependents)
+		for (auto& x : token.dependencies)
+		{
+			//Don't call this if it's in the parents to prevent endless loops
+			if (parents.count(x) == 0)
+				calculateFollowSetPart2(parents, x, true);
+		}
+
+	//Add all the follow sets from the tokens that this token appears at the end of a rule for
+	for (auto& aFollowToken : token.dependFollowSet)
+	{
+		for (auto& aToken : table.getToken(aFollowToken).followSet)
+		{
+			token.addFollowSet(aToken);
+		}
+	}
+
+	//If it changed the follow set, need to recheck anything dependent on it that isn't going
+	//to be checked after this is run
+	//This is because two tokens may be dependent on each other
+	//and we don't know which will be figured out first
+	if (followSetSize != token.followSet.size())
+	{
+		table.updateToken(token);
+		for (auto& x : token.precendFollowSet)
+		{
+			//Don't call this if it's in the parents to prevent endless loops
+			if (parents.count(name) == 0)
+				calculateFollowSetPart2(parents, x, false);
 		}
 	}
 }

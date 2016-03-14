@@ -66,17 +66,17 @@ void RuleTable::addDependency(string name, string dependency){
 	tokenTable.at(name).addDependency(dependency);
 }
 
-void RuleTable::addPrependency(string name, string prependency){
+void RuleTable::addPrecendency(string name, string precendency){
 	//Don't add empty lambda as a token
-	//Also don't add a token as its own prependent
-	if (name == "lambda" || prependency == "lambda" || name == prependency)
+	//Also don't add a token as its own precendent
+	if (name == "lambda" || precendency == "lambda" || name == precendency)
 		return;
 
 	if (!containsToken(name))
 	{
 		addToken(name);
 	}
-	tokenTable.at(name).addPrependency(prependency);
+	tokenTable.at(name).addPrecendency(precendency);
 }
 
 void RuleTable::addToFirst(string name, string token) {

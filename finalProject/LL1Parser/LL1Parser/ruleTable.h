@@ -15,7 +15,7 @@ public:
 	void updateToken(Token token);
 	void addRule(string name, list<string> rule);
 	void addDependency(string name, string dependency);
-	void addPrependency(string name, string prependency);
+	void addPrecendency(string name, string precendency);
 	void addToFirst(string name, string token);
 	bool removeRule(string name, list<string> rule);
 	string toString();

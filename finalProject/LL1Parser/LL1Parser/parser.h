@@ -12,6 +12,8 @@ private:
 	void calculateLambdaRulesR(unordered_set<string> parents, string name, bool checkDependents);
 	void calculateFirstSet(unordered_set<string> parents, string name, bool checkDependents);
 	void calculateFollowSet(unordered_set<string> parents, string name);
+	void calculateFollowSet();
+	void calculateFollowSetPart2(unordered_set<string> parents, string name, bool checkDependents);
 
 	RuleTable table;
 };
