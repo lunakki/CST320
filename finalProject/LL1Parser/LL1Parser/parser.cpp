@@ -16,6 +16,10 @@ bool GrammarParser::parse(string fileName, string &error, RuleTable &outTable)
 	calculateFirstSet(parents, table.getStartingToken(), true);
 	calculateFollowSet();
 
+	success = createLL1Table(error);
+	if (!success)
+		return success;
+
 	outTable = table;
 	return success;
 }
@@ -182,7 +186,7 @@ void GrammarParser::calculateFirstSet(unordered_set<string> parents, string name
 			for (auto& aFirst : table.getToken(aToken).firstSet) //Each item in the first set of the token
 			{
 				token.addFirstSet(aFirst);
-				token.addRuleFollowSet(aFirst, aRule);
+				token.addRuleFirstSet(aFirst, aRule);
 			}
 			//We only care about the tokens that could be first
 			//Don't check the next token if this one can't be lambda
@@ -289,6 +293,9 @@ void GrammarParser::calculateFollowSet()
 
 	//Calculate the follow set cases involved other follow sets
 	calculateFollowSetPart2(parents, table.getStartingToken(), true);
+
+	//Update the map for which rules go with which token pairs
+	addFollowToRuleMap();
 }
 
 void GrammarParser::calculateFollowSetPart2(unordered_set<string> parents, string name, bool checkDependents)
@@ -335,4 +342,93 @@ void GrammarParser::calculateFollowSetPart2(unordered_set<string> parents, strin
 				calculateFollowSetPart2(parents, x, false);
 		}
 	}
+}
+
+//Now that we have the complete follow set, we need to add all the following tokens to the map
+//that tracks which rules are associated with which token pairs
+//in the case that the token could be lambda
+void GrammarParser::addFollowToRuleMap()
+{
+	list<string> nonTerminals = table.getNonTerminals();
+	list<string> lambdaRule;
+	lambdaRule.push_back("lambda");
+	for (string token : nonTerminals)
+	{
+		Token currToken = table.getToken(token);
+		if (currToken.hasLambda)
+		{
+			for (string followToken : currToken.followSet)
+				currToken.addRuleFirstSet(followToken, lambdaRule);
+			table.updateToken(currToken);
+		}
+	}
+}
+
+bool GrammarParser::createLL1Table(string &error)
+{
+	list<string> terminals = table.getTerminals();
+	list<string> nonTerminals = table.getNonTerminals();
+	string html, fileName = "LL1.html";
+	ofstream outFile;
+	outFile.open(fileName);
+	if (!outFile.is_open())
+	{
+		error = "Cannot open output file: " + fileName;
+		return false;
+	}
+
+	//Header HTML
+	html = "<!DOCTYPE html><html><head><title>LL(1) Table</title></head><body><table border='1'>";
+	
+	//Row for terminal tokens
+	html += "<tr>\n\t<td></td>";
+	for (string token : terminals)
+	{
+		html += "\n\t<td>" + token + "</td>";
+	}
+	html += "</tr>\n";
+
+	//Rows for non-terminals
+	for (string name : nonTerminals)
+	{
+		Token token = table.getToken(name);
+		//Put the name of the non terminal in the left column
+		html += "\n<tr>\n\t<td>" + name + "</td>";
+		for (string terminal : terminals)
+		{
+			//Create cell for every non terminal
+			html += "\n\t<td>";
+			//Make sure there are some rules for this token pair (if not the cell is just blank)
+			if (token.ruleFirstSet.count(terminal) != 0)
+			{
+				bool firstRule = true;	//To insert breaks between rules
+				for (list<string> rule : token.ruleFirstSet.at(terminal)) 
+				{
+					//Put a break before this rule if it's not the first
+					if (!firstRule)
+					{
+						html += "<br>";
+					}
+
+					//Add every token in the rule to the line
+					for (string aToken : rule)
+					{
+						html += aToken + " ";
+					}
+					//So we know to put a line break next loop
+					firstRule = false;
+				}
+			}
+			//Close the cell for the current token pair
+			html += "</td>";
+		}
+		//Close the row for the nonTerminal row
+		html += "</tr>";
+	}
+
+	//Close up all the tags and output to the file
+	html += "</table></body></html>";
+	outFile << html;
+	outFile.close();
+	return true;
 }

@@ -23,6 +23,8 @@ public:
 	void clear();
 	void setStartingToken(string name);
 	string getStartingToken();
+	list<string> getTerminals();
+	list<string> getNonTerminals();
 
 private:
 	unordered_map<std::string,Token> tokenTable;	//Map for holding tokens and their properties

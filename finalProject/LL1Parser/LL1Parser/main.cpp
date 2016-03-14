@@ -19,6 +19,7 @@ int main() {
 		cout << "Error parsing grammar file: " << error;
 	}
 
+	cout << "\nYou can find the LL(1) table in LL1Parser\\LL1Parser\\LL1.html";
 	cout << "\n\nPress enter to continue.\n";
 	getchar();
 }

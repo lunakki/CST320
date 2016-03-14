@@ -14,6 +14,8 @@ private:
 	void calculateFollowSet(unordered_set<string> parents, string name);
 	void calculateFollowSet();
 	void calculateFollowSetPart2(unordered_set<string> parents, string name, bool checkDependents);
+	void addFollowToRuleMap();
+	bool createLL1Table(string &error);
 
 	RuleTable table;
 };

@@ -132,3 +132,19 @@ void RuleTable::setStartingToken(string name) {
 string RuleTable::getStartingToken() {
 	return start;
 }
+
+list<string> RuleTable::getTerminals() {
+	list<string> terminals;
+	for ( auto it = tokenTable.begin(); it != tokenTable.end(); ++it )
+		if (it->second.isTerminal)
+			terminals.push_back(it->first);
+	return terminals;
+}
+
+list<string> RuleTable::getNonTerminals() {
+	list<string> nonTerminals;
+	for ( auto it = tokenTable.begin(); it != tokenTable.end(); ++it )
+		if (!(it->second.isTerminal))
+			nonTerminals.push_back(it->first);
+	return nonTerminals;
+}

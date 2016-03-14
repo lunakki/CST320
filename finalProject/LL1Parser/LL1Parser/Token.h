@@ -51,16 +51,16 @@ struct Token {
 		precendFollowSet.insert(token);
 	}
 
-	void addRuleFollowSet(string startToken, list<string> rule) {
+	void addRuleFirstSet(string startToken, list<string> rule) {
 		//Add a new entry if it doesn't exist
 		list<list<string>> ruleSet;
-		if (ruleFollowSet.count(startToken) == 0)
+		if (ruleFirstSet.count(startToken) == 0)
 		{			
 			ruleSet.push_back(rule);
-			ruleFollowSet.insert(make_pair(startToken, ruleSet));
+			ruleFirstSet.insert(make_pair(startToken, ruleSet));
 		} else //Update an existing entry
 		{
-			ruleSet = ruleFollowSet.at(startToken);
+			ruleSet = ruleFirstSet.at(startToken);
 			//Check if the rule is already in the set
 			for (auto &eachRule : ruleSet)	//Each rule in the set of rules
 			{
@@ -69,7 +69,7 @@ struct Token {
 					return;	//If the rule is already in the set, don't add it
 				}
 			}
-			ruleFollowSet.at(startToken).push_back(rule);
+			ruleFirstSet.at(startToken).push_back(rule);
 		}
 	}
 
@@ -149,7 +149,7 @@ struct Token {
 	unordered_set<string> followSet;
 	unordered_set<string> dependFollowSet;
 	unordered_set<string> precendFollowSet;
-	unordered_map<string, list<list<string>>> ruleFollowSet;
+	unordered_map<string, list<list<string>>> ruleFirstSet;
 };
 
 #endif
