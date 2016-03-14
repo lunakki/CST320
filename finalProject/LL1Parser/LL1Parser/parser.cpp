@@ -1,4 +1,5 @@
 #include "parser.h"
+#include <iostream>
 
 //Public function to parse a grammar file
 bool GrammarParser::parse(string fileName, string &error, RuleTable &outTable)
@@ -6,7 +7,6 @@ bool GrammarParser::parse(string fileName, string &error, RuleTable &outTable)
 	unordered_set<string> parents;
 	bool success;
 	table.clear();
-
 
 	success = parseFile(fileName, error);
 	if (!success)
@@ -252,12 +252,13 @@ void GrammarParser::calculateFollowSet(unordered_set<string> parents, string nam
 				Token currToken = table.getToken(*itRule);
 				for (++itRule2; itRule2 != aRule.end(); ++itRule2)
 				{
-					
+					cout << *itRule2 << endl;
 					//Add everything in the first set of the following token to this token
 					for (auto& aFirst : table.getToken(*itRule2).firstSet) //Each item in the first set of the token
 					{
 						currToken.addFollowSet(aFirst);
 					}
+					cout << *itRule2 << "finished\n";
 					
 					//The next token can follow this one only if this is lambda
 					if (!table.getToken(*itRule2).hasLambda)
@@ -378,7 +379,8 @@ bool GrammarParser::createLL1Table(string &error)
 	}
 
 	//Header HTML
-	html = "<!DOCTYPE html><html><head><title>LL(1) Table</title></head><body><table border='1'>";
+	html = "<!DOCTYPE html><html><head>\n<style> td { white-space: nowrap; } </style>";
+	html += "\n<title>LL(1) Table</title></head><body><table border='1'>";
 	
 	//Row for terminal tokens
 	html += "<tr>\n\t<td></td>";
