@@ -145,6 +145,7 @@ void GrammarParser::calculateLambdaRulesR(unordered_set<string> parents, string 
 //This includes checking other rules as appropriate, and looking past tokens that can be lambda
 //The first set is stored in the token table
 //Note that lambda is not stored in the first set; there's a separate property to track that
+//It also fills out a map of which rules for each token can start with what (to generate LL(1) table later)
 void GrammarParser::calculateFirstSet(unordered_set<string> parents, string name, bool checkDependents)
 {
 	Token token = table.getToken(name);
@@ -181,6 +182,7 @@ void GrammarParser::calculateFirstSet(unordered_set<string> parents, string name
 			for (auto& aFirst : table.getToken(aToken).firstSet) //Each item in the first set of the token
 			{
 				token.addFirstSet(aFirst);
+				token.addRuleFollowSet(aFirst, aRule);
 			}
 			//We only care about the tokens that could be first
 			//Don't check the next token if this one can't be lambda

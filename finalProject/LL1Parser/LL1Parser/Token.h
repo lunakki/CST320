@@ -4,6 +4,7 @@
 #include <string>
 #include <list>
 #include <unordered_set>
+#include <unordered_map>
 
 using namespace std;
 
@@ -48,6 +49,28 @@ struct Token {
 
 	void addPrependFollowSet(string token) {
 		precendFollowSet.insert(token);
+	}
+
+	void addRuleFollowSet(string startToken, list<string> rule) {
+		//Add a new entry if it doesn't exist
+		list<list<string>> ruleSet;
+		if (ruleFollowSet.count(startToken) == 0)
+		{			
+			ruleSet.push_back(rule);
+			ruleFollowSet.insert(make_pair(startToken, ruleSet));
+		} else //Update an existing entry
+		{
+			ruleSet = ruleFollowSet.at(startToken);
+			//Check if the rule is already in the set
+			for (auto &eachRule : ruleSet)	//Each rule in the set of rules
+			{
+				if (rule == eachRule)
+				{
+					return;	//If the rule is already in the set, don't add it
+				}
+			}
+			ruleFollowSet.at(startToken).push_back(rule);
+		}
 	}
 
 	string toString() {
@@ -126,6 +149,7 @@ struct Token {
 	unordered_set<string> followSet;
 	unordered_set<string> dependFollowSet;
 	unordered_set<string> precendFollowSet;
+	unordered_map<string, list<list<string>>> ruleFollowSet;
 };
 
 #endif
