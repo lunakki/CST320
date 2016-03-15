@@ -23,6 +23,7 @@ struct Token {
 		hasLambda = false;
 	}
 
+	//Functions for adding to collectiongs
 	void addRule(list<string>rule) {
 		rules.push_back(rule);
 	}
@@ -73,10 +74,13 @@ struct Token {
 		}
 	}
 
+	//For easy printing
 	string toString() {
+		//Terminals just print out the name
 		if (isTerminal)
 			return "Token: " + name + " (terminal)\n";
 
+		//Non terminals print out all of their members
 		string output = "Token: " + name + "\n\tIs terminal: no";
 		
 		output += "\n\tHas lambda rule: ";
@@ -139,16 +143,35 @@ struct Token {
 		return output;
 	}
 
-	string name;
+	//The name of the token (like S)
+	string name;	
+	//Whether or not the token is a terminal
 	bool isTerminal;
+	//Whether or not the token can be lambda (obviously never true for terminals)
 	bool hasLambda;
+	//Any rules this token can be replaced with
+	//One rule is a list of strings to make it easy to iterate through each token
+	//The collection of these lists is in another list
 	list<list<string>> rules;
+	//All tokens that this one is dependent on (they appear in its rules)
+	//Example: S -> abC would have a, b, and C as dependents
 	unordered_set<string> dependencies;
+	//All tokens dependent on this one
+	//In the above example, S is a precendent of a, b, and C
 	unordered_set<string> precendencies;
+	//The first set for this token
+	//For terminals, it's itself
 	unordered_set<string> firstSet;
+	//The follow set for this token
+	//Blank for terminals
 	unordered_set<string> followSet;
+	//Any tokens that this one's follow set depends on the follow set of
+	//Example: S -> abC, C's follow set is dependent on the follow set of S
+	//because it comes at the end of the rule
 	unordered_set<string> dependFollowSet;
+	//Same as above but reverse; S is a precendent of C.
 	unordered_set<string> precendFollowSet;
+	//This is essentially an LL(1) table for a particular token in map form
 	unordered_map<string, list<list<string>>> ruleFirstSet;
 };
 

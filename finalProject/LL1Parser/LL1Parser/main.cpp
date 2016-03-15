@@ -12,7 +12,8 @@ int main() {
 
 	if (success)
 	{
-		cout << "Grammar file parsed. Tokens: \n" << table.toString();
+		cout << "Grammar file parsed.";
+		//cout << "Tokens: \n" << table.toString();
 	}
 	else
 	{

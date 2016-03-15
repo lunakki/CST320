@@ -1,5 +1,4 @@
 #include "parser.h"
-#include <iostream>
 
 //Public function to parse a grammar file
 bool GrammarParser::parse(string fileName, string &error, RuleTable &outTable)
@@ -252,13 +251,11 @@ void GrammarParser::calculateFollowSet(unordered_set<string> parents, string nam
 				Token currToken = table.getToken(*itRule);
 				for (++itRule2; itRule2 != aRule.end(); ++itRule2)
 				{
-					cout << *itRule2 << endl;
 					//Add everything in the first set of the following token to this token
 					for (auto& aFirst : table.getToken(*itRule2).firstSet) //Each item in the first set of the token
 					{
 						currToken.addFollowSet(aFirst);
 					}
-					cout << *itRule2 << "finished\n";
 					
 					//The next token can follow this one only if this is lambda
 					if (!table.getToken(*itRule2).hasLambda)
